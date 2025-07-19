@@ -3,8 +3,7 @@ import { NextResponse } from "next/server";
 
 export async function GET() {
   const posts = await prisma.post.findMany({
-    include: { author: true }, // Optional
-    orderBy: { createdAt: "desc" },
+    include: { author: { select: { id: true, name: true } } },
   });
 
   return NextResponse.json(posts);
