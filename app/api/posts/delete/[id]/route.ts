@@ -1,15 +1,15 @@
+// app/api/posts/delete/[id]/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 
-export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const awaitedParams = await params;
   const postId = awaitedParams.id;
+
   const userId = req.headers.get("x-user-id");
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-
-  const { title, content } = await req.json();
 
   const post = await prisma.post.findUnique({ where: { id: postId } });
 
@@ -17,10 +17,7 @@ export async function PUT(req: NextRequest, { params }: { params: Promise<{ id: 
     return NextResponse.json({ error: "Post not found or not yours" }, { status: 404 });
   }
 
-  const updatedPost = await prisma.post.update({
-    where: { id: postId },
-    data: { title, content },
-  });
+  await prisma.post.delete({ where: { id: postId } });
 
-  return NextResponse.json({ post: updatedPost });
+  return NextResponse.json({ message: "Post deleted successfully" });
 }

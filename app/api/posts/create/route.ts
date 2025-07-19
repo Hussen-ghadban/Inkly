@@ -1,18 +1,14 @@
 // app/api/posts/add/route.ts
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { verifyJwtToken } from "@/lib/jwt";
 
 export async function POST(req: NextRequest) {
-  const token = req.headers.get("authorization")?.split(" ")[1];
-  const payload = token && verifyJwtToken(token);
-
-  if (!payload) {
+  const userId = req.headers.get("x-user-id");
+  if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const body = await req.json();
-  const { title, content } = body;
+  const { title, content } = await req.json();
 
   if (!title || !content) {
     return NextResponse.json({ error: "Missing fields" }, { status: 400 });
@@ -22,7 +18,7 @@ export async function POST(req: NextRequest) {
     data: {
       title,
       content,
-      authorId: payload.id, // assuming the JWT includes `id`
+      authorId: userId,
     },
   });
 
