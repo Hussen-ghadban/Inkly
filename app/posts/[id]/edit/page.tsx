@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { ArrowLeft, Save, Eye, AlertCircle, Loader2, FileEdit, Type, AlignLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -23,6 +25,7 @@ export default function EditPostPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+const token = useSelector((state: RootState) => state.auth.token);
 
   useEffect(() => {
     const fetchPost = async () => {
@@ -60,37 +63,37 @@ export default function EditPostPage() {
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [hasUnsavedChanges, isSaving]);
 
-  const handleUpdate = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!title.trim() || !content.trim()) {
-      setError('Both title and content are required');
-      return;
-    }
+const handleUpdate = async (e: React.FormEvent) => {
+  e.preventDefault();
+  if (!title.trim() || !content.trim()) {
+    setError('Both title and content are required');
+    return;
+  }
 
-    try {
-      setIsSaving(true);
-      setError(null);
-      const token = localStorage.getItem('token');
+  try {
+    setIsSaving(true);
+    setError(null);
 
-      const res = await fetch(`${baseUrl}/api/posts/update/${id}`, {
-        method: 'PUT',
-        headers: { 
-          'Content-Type': 'application/json',
-          ...(token ? { 'Authorization': `Bearer ${token}` } : {})
-        },
-        body: JSON.stringify({ title, content }),
-      });
+    const res = await fetch(`${baseUrl}/api/posts/update/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify({ title, content }),
+    });
 
-      if (!res.ok) throw new Error('Failed to update post');
-      
-      setHasUnsavedChanges(false);
-      router.push(`/posts/${id}`);
-    } catch (err) {
-      setError(`Failed to update post. Please try again.,${err}`);
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    if (!res.ok) throw new Error('Failed to update post');
+
+    setHasUnsavedChanges(false);
+    router.push(`/posts/${id}`);
+  } catch (err) {
+    setError(`Failed to update post. Please try again.,${err}`);
+  } finally {
+    setIsSaving(false);
+  }
+};
+
 
   const handleCancel = () => {
     if (hasUnsavedChanges) {

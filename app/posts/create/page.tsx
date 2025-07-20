@@ -9,10 +9,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Card, CardContent } from '@/components/ui/card';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
-// ✅ Zod Schema
 const formSchema = z.object({
   title: z.string().min(1, { message: 'Title is required' }),
   content: z.string().min(1, { message: 'Content is required' }),
@@ -30,23 +31,30 @@ export default function CreatePostPage() {
     resolver: zodResolver(formSchema),
   });
 
+  const token = useSelector((state: RootState) => state.auth.token);
+
   const onSubmit = async (data: FormData) => {
-    const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('No token found — user may not be authenticated');
+      return;
+    }
 
     const res = await fetch(`${baseUrl}/api/posts/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        Authorization: `Bearer ${token}`,
       },
       body: JSON.stringify(data),
     });
 
-    if (res.ok) {
-      router.push('/posts');
-    } else {
-      console.error('Failed to create post');
+    if (!res.ok) {
+      const errorData = await res.json().catch(() => null);
+      console.error('Failed to create post', errorData || res.statusText);
+      return;
     }
+
+    router.push('/posts');
   };
 
   return (
