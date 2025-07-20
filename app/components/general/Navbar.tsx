@@ -1,4 +1,3 @@
-
 import Link from 'next/link'
 
 const Navbar = () => {
@@ -7,13 +6,13 @@ const Navbar = () => {
       <div className="text-xl font-bold tracking-wide">
         <Link href="/">MyBlogs</Link>
       </div>
-
+      
       <ul className="flex items-center space-x-6">
         <li>
           <Link href="/" className="hover:text-blue-400 transition-colors">Home</Link>
         </li>
         <li>
-          <Link href="/about" className="hover:text-blue-400 transition-colors">Dashboard</Link>
+          <Link href="/dashboard" className="hover:text-blue-400 transition-colors">Dashboard</Link>
         </li>
         <li>
           <Link href="/about" className="hover:text-blue-400 transition-colors">About</Link>
@@ -25,19 +24,13 @@ const Navbar = () => {
           <Link href="/contact" className="hover:text-blue-400 transition-colors">Contact</Link>
         </li>
       </ul>
-
-      <div className="space-x-4">
+      
+      <div>
         <Link
-          href="/signin"
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded text-white transition"
+          href="/auth"
+          className="bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 px-6 py-2 rounded-lg text-white font-medium transition-all duration-200 transform hover:scale-105 shadow-lg"
         >
-          Sign In
-        </Link>
-        <Link
-          href="/signup"
-          className="bg-transparent border border-blue-500 hover:bg-blue-500 hover:text-white px-4 py-2 rounded text-blue-400 transition"
-        >
-          Sign Up
+          Get Started
         </Link>
       </div>
     </nav>
