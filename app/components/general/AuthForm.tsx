@@ -20,7 +20,12 @@ export default function AuthForm() {
       : { email, password };
 
     try {
-      const res = await fetch(`/api/auth/${mode}`, {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
+      const apiUrl = `${baseUrl}/api/auth/${mode}`;
+console.log('Environment URL:', process.env.NEXT_PUBLIC_API_URL);
+console.log('Base URL:', baseUrl);
+console.log('Final API URL:', apiUrl);
+      const res = await fetch(apiUrl, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
