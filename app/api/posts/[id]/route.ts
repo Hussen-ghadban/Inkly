@@ -1,9 +1,11 @@
 import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(req: NextRequest, context: any) {
+  const { id } = context.params;
+  
   const post = await prisma.post.findUnique({
-    where: { id: params.id },
+    where: { id },
     include: { author: true },
   });
 
