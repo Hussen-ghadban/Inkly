@@ -61,7 +61,10 @@ export default function AuthForm() {
       }
 
       if (mode === 'login') {
-        dispatch(loginSuccess(resData.token)); // Dispatch token to Redux store
+          dispatch(loginSuccess({
+        token: resData.token,
+        user: resData.user
+      }));
         setMessage('Login successful!');
         router.push('/');
       } else {
