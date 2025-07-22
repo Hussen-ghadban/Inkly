@@ -9,6 +9,11 @@ export async function POST(req: Request) {
 
   const user = await prisma.user.findUnique({
     where: { email },
+    select: {
+      id: true,
+      name: true,
+      password: true, // Ensure password is selected for verification
+    },
   });
 
   if (!user) {
@@ -22,16 +27,13 @@ export async function POST(req: Request) {
   }
 
   const token = signJwtToken({ id: user.id });
+  const { password: _, ...userWithoutPassword } = user;
 
   return NextResponse.json(
     {
       message: "Login successful",
       token,
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-      },
+      user: userWithoutPassword,
     },
     { status: 200 }
   );
