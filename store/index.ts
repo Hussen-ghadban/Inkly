@@ -24,7 +24,7 @@ const persistConfig = {
   ],
 };
 
-const persistedReducer = persistReducer(persistConfig, rootReducer) as typeof rootReducer;
+const persistedReducer = persistReducer(persistConfig, rootReducer) as unknown as typeof rootReducer;
 
 
 export const store = configureStore({
