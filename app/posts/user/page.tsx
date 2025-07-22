@@ -8,12 +8,10 @@ import {
   ArrowRight, 
   AlertCircle, 
   Search, 
-  Filter,
   Grid3X3,
   List,
   Calendar,
   Eye,
-  Clock,
   Plus,
   TrendingUp,
   Users
@@ -23,11 +21,14 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { RootState } from '@/store';
+import { useSelector } from 'react-redux';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface Post {
+    
   id: string;
   title: string;
   content: string;
@@ -37,17 +38,26 @@ interface Post {
   author?: string;
 }
 
-const fetchPosts = async (): Promise<Post[]> => {
-  const res = await fetch(`${baseUrl}/api/posts`);
-  if (!res.ok) throw new Error('Failed to fetch posts');
-  return res.json();
-};
 
 export default function BlogDashboard() {
-  const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
-
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedCategory, setSelectedCategory] = useState('all');
+    const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const token = useSelector((state: RootState) => state.auth.token);
+    
+    const fetchPosts = async (): Promise<Post[]> => {
+      const res = await fetch(`${baseUrl}/api/posts/user`,{
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!res.ok) throw new Error('Failed to fetch posts');
+       const data=await res.json();
+         console.log("Fetched posts:", data);
+        return data.posts || [];
+    };
   const { data: posts, isLoading, error } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
