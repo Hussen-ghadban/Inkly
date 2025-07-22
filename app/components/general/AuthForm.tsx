@@ -4,7 +4,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-
+import { useRouter } from 'next/navigation';
 import { useDispatch } from 'react-redux';
 import { loginSuccess } from '@/features/auth/authSlice';
 
@@ -21,7 +21,7 @@ export default function AuthForm() {
   const [mode, setMode] = useState<'login' | 'register'>('login');
   const [message, setMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -63,8 +63,10 @@ export default function AuthForm() {
       if (mode === 'login') {
         dispatch(loginSuccess(resData.token)); // Dispatch token to Redux store
         setMessage('Login successful!');
+        router.push('/');
       } else {
         setMessage('Registration successful!');
+        router.push('/posts');
       }
 
       reset(); // Reset form after success
