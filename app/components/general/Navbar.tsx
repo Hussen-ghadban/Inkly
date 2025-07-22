@@ -1,6 +1,17 @@
+"use client";
+
 import Link from 'next/link'
+import { useDispatch } from 'react-redux';
+import { logout } from '@/features/auth/authSlice';
 
 const Navbar = () => {
+    const dispatch = useDispatch();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    // Optionally, redirect to login page
+    window.location.href = '/auth';
+  };
   return (
     <nav className="bg-gray-900 text-white px-6 py-4 shadow-md flex justify-between items-center">
       <div className="text-xl font-bold tracking-wide">
@@ -32,6 +43,12 @@ const Navbar = () => {
         >
           Get Started
         </Link>
+                <button
+          onClick={handleLogout}
+          className="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg text-white font-medium transition-all duration-200"
+        >
+          Logout
+        </button>
       </div>
     </nav>
   )

@@ -29,5 +29,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/api/posts/:path*"],
+  matcher: ["/api/posts/create", "/api/posts/user", "/api/posts/update/:id"],
 };
