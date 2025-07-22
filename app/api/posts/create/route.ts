@@ -4,6 +4,7 @@ import { prisma } from "@/lib/db";
 
 export async function POST(req: NextRequest) {
   const userId = req.headers.get("x-user-id");
+  console.log("Creating post for user ID:", userId);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
