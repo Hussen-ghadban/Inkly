@@ -1,11 +1,12 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { prisma } from "@/lib/db";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(req: NextRequest, context: any) {
-  const { id } = context.params;
-  
+export async function GET(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const { id } = await params;
+
   const post = await prisma.post.findUnique({
     where: { id },
     include: { author: true },
@@ -15,5 +16,5 @@ export async function GET(req: NextRequest, context: any) {
     return NextResponse.json({ error: "Post not found" }, { status: 404 });
   }
 
-  return NextResponse.json(post);
+  return NextResponse.json(post, { status: 200 });
 }
