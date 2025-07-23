@@ -53,7 +53,7 @@ const router = useRouter();
         {/* Logo */}
         <div className="text-xl font-bold tracking-wide">
           <Link href="/" className="hover:text-blue-400 transition-colors">
-            MyBlogs
+            Inkly
           </Link>
         </div>
         
@@ -132,7 +132,7 @@ const router = useRouter();
                   <DropdownMenuSeparator className="bg-gray-700" />
                   
                   <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
-                    <Link href="/dashboard" className="flex items-center w-full">
+                    <Link href="/posts/user" className="flex items-center w-full">
                       {/* <Dashboard className="mr-2 h-4 w-4" /> */}
                       Dashboard
                     </Link>

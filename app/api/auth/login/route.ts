@@ -26,7 +26,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: "Incorrect password" }, { status: 401 });
   }
 
-  const token = signJwtToken({ id: user.id });
+  const token = signJwtToken({ id: user.id});
   const { password: _, ...userWithoutPassword } = user;
 
   return NextResponse.json(
