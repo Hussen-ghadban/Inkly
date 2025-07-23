@@ -8,7 +8,6 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
@@ -25,6 +24,10 @@ import {
   Mail
 } from 'lucide-react';
 import { RootState } from '@/store';
+import { Router } from 'next/router';
+import { useRouter } from 'next/navigation';
+
+
 
 const Navbar = () => {
   const dispatch = useDispatch();
@@ -32,17 +35,17 @@ const Navbar = () => {
   // Get user authentication state from Redux store
   // Replace with your actual auth selector
 const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
-  console.log('Navbar user:', user?.name);
   const handleLogout = () => {
     dispatch(logout());
     window.location.href = '/auth';
   };
 
   // Get user initials for avatar fallback
-  const getUserInitials = (name) => {
+  const getUserInitials = (name:string|undefined) => {
     if (!name) return 'U';
     return name.split(' ').map(word => word[0]).join('').toUpperCase();
   };
+const router = useRouter();
 
   return (
     <nav className="bg-gray-900 border-b border-gray-800 text-white px-6 py-4 shadow-lg">
@@ -78,29 +81,11 @@ const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
           )}
           <li>
             <Link 
-              href="/about" 
-              className="flex items-center gap-2 hover:text-blue-400 transition-colors"
-            >
-              <Info size={16} />
-              About
-            </Link>
-          </li>
-          <li>
-            <Link 
               href="/posts" 
               className="flex items-center gap-2 hover:text-blue-400 transition-colors"
             >
               <FileText size={16} />
               Blogs
-            </Link>
-          </li>
-          <li>
-            <Link 
-              href="/contact" 
-              className="flex items-center gap-2 hover:text-blue-400 transition-colors"
-            >
-              <Mail size={16} />
-              Contact
             </Link>
           </li>
         </ul>
@@ -111,24 +96,30 @@ const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
             // Profile Hero Section for logged-in users
             <div className="flex items-center gap-3">
               {/* User Badge/Status */}
-              <Badge variant="secondary" className="hidden sm:flex">
+              {/* <Badge variant="secondary" className="hidden sm:flex">
                 Welcome back!
-              </Badge>
+              </Badge> */}
+              <Button 
+                variant="outline" 
+                className="hidden sm:flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-colors"
+                onClick={() => router.push('/posts/create')}
               
+              >Add Post
+                <PlusCircle className="h-4 w-4" />
+              </Button>
               {/* Profile Dropdown */}
               <DropdownMenu>
-                <DropdownMenuTrigger asChild>
+                  <DropdownMenuTrigger asChild>
                   <Button 
                     variant="ghost" 
                     className="relative h-10 w-10 rounded-full border-2 border-blue-500 hover:border-blue-400 transition-colors"
                   >
-                    <Avatar className="h-9 w-9">
+                    <Avatar>
                       <AvatarImage 
-                        src={user?.avatar || user?.profileImage} 
-                        alt={user?.name || user?.username || 'User'} 
+                        alt={user?.name || 'User'} 
                       />
-                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white font-semibold">
-                        {getUserInitials(user?.name || user?.username)}
+                      <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-600 text-white ">
+                        {getUserInitials(user?.name)}
                       </AvatarFallback>
                     </Avatar>
                   </Button>
@@ -138,16 +129,6 @@ const { isAuthenticated, user } = useSelector((state: RootState) => state.auth);
                   align="end" 
                   forceMount
                 >
-                  <DropdownMenuLabel className="font-normal">
-                    <div className="flex flex-col space-y-1">
-                      <p className="text-sm font-medium leading-none">
-                        {user?.name || user?.username || 'User'}
-                      </p>
-                      <p className="text-xs leading-none text-gray-400">
-                        {user?.email}
-                      </p>
-                    </div>
-                  </DropdownMenuLabel>
                   <DropdownMenuSeparator className="bg-gray-700" />
                   
                   <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
