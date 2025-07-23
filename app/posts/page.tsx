@@ -8,14 +8,11 @@ import {
   ArrowRight, 
   AlertCircle, 
   Search, 
-  Filter,
   Grid3X3,
   List,
   Calendar,
   Eye,
-  Clock,
   Plus,
-  TrendingUp,
   Users
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -23,7 +20,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
