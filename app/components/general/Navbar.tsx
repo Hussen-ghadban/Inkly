@@ -12,19 +12,15 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Badge } from '@/components/ui/badge';
 import { 
   User, 
   Settings, 
   LogOut,
   PlusCircle,
   Home,
-  Info,
   FileText,
-  Mail
 } from 'lucide-react';
 import { RootState } from '@/store';
-import { Router } from 'next/router';
 import { useRouter } from 'next/navigation';
 
 
@@ -68,26 +64,6 @@ const router = useRouter();
               Home
             </Link>
           </li>
-          {isAuthenticated && (
-            <li>
-              <Link 
-                href="/dashboard" 
-                className="flex items-center gap-2 hover:text-blue-400 transition-colors"
-              >
-                {/* <Dashboard size={16} /> */}
-                Dashboard
-              </Link>
-            </li>
-          )}
-          <li>
-            <Link 
-              href="/posts" 
-              className="flex items-center gap-2 hover:text-blue-400 transition-colors"
-            >
-              <FileText size={16} />
-              Blogs
-            </Link>
-          </li>
         </ul>
         
         {/* Hero Section - Profile or Get Started */}
@@ -95,10 +71,6 @@ const router = useRouter();
           {isAuthenticated ? (
             // Profile Hero Section for logged-in users
             <div className="flex items-center gap-3">
-              {/* User Badge/Status */}
-              {/* <Badge variant="secondary" className="hidden sm:flex">
-                Welcome back!
-              </Badge> */}
               <Button 
                 variant="outline" 
                 className="hidden sm:flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-colors"
