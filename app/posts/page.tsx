@@ -125,7 +125,7 @@ export default function BlogDashboard() {
           <div className="flex items-center space-x-4">
             <div className="flex items-center">
               <Calendar className="w-3 h-3 mr-1" />
-              {formatDate(post.publishedAt)}
+              {formatDate(post.createdAt)}
             </div>
             {post.views !== undefined && (
               <div className="flex items-center">
@@ -168,7 +168,7 @@ export default function BlogDashboard() {
             <div className="flex items-center space-x-4 text-sm text-muted-foreground">
               <div className="flex items-center">
                 <Calendar className="w-3 h-3 mr-1" />
-                {formatDate(post.publishedAt)}
+                {formatDate(post.createdAt)}
               </div>
               {post.views !== undefined && (
                 <div className="flex items-center">
@@ -179,7 +179,7 @@ export default function BlogDashboard() {
               {post.author && (
                 <div className="flex items-center">
                   <Users className="w-3 h-3 mr-1" />
-                  {post.author}
+                  {post.author.name || 'Unknown Author'}
                 </div>
               )}
             </div>
