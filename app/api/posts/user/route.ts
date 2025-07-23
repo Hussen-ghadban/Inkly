@@ -3,7 +3,6 @@ import { prisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
   const userId = req.headers.get("x-user-id");
-console.log("Fetching posts for user ID:", userId);
   if (!userId) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }

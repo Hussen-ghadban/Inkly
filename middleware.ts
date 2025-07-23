@@ -11,7 +11,6 @@ export async function middleware(req: NextRequest) {
 
   const token = authHeader.split(" ")[1];
   const payload = await verifyJwtToken(token);
-
   if (!payload) {
     return NextResponse.json({ error: "Invalid token" }, { status: 403 });
   }

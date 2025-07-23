@@ -31,10 +31,13 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  publishedAt?: string;
+  createdAt?: string;
   views?: number;
   category?: string;
-  author?: string;
+  author?: {
+    name: string;
+    email?: string;
+  };
 }
 
 const fetchPosts = async (): Promise<Post[]> => {
@@ -66,25 +69,6 @@ export default function BlogDashboard() {
     });
   }, [posts, searchQuery, selectedCategory]);
 
-  // Get unique categories
-  const categories = useMemo(() => {
-    if (!posts) return [];
-    const cats = [...new Set(posts.map(post => post.category).filter(Boolean))];
-    return cats as string[];
-  }, [posts]);
-
-  // Stats calculations
-  const stats = useMemo(() => {
-    if (!posts) return { total: 0, totalViews: 0, avgViews: 0 };
-    
-    const totalViews = posts.reduce((sum, post) => sum + (post.views || 0), 0);
-    return {
-      total: posts.length,
-      totalViews,
-      avgViews: posts.length > 0 ? Math.round(totalViews / posts.length) : 0
-    };
-  }, [posts]);
-
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'No date';
     return new Date(dateString).toLocaleDateString('en-US', { 
@@ -104,13 +88,10 @@ export default function BlogDashboard() {
     </div>
   );
 
-  const PostCard = ({ post, index }: { post: Post; index: number }) => (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50">
+  const PostCard = ({ post }: { post: Post; }) => (
+    <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between mb-2">
-          <Badge variant="secondary" className="text-xs">
-            #{String(index + 1).padStart(2, '0')}
-          </Badge>
           <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
         </div>
         <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2 leading-tight">
@@ -144,15 +125,12 @@ export default function BlogDashboard() {
     </Card>
   );
 
-  const PostListItem = ({ post, index }: { post: Post; index: number }) => (
+  const PostListItem = ({ post }: { post: Post;}) => (
     <Card className="group hover:shadow-md transition-all duration-200 border-l-4 border-l-blue-500">
       <CardContent className="p-6">
         <div className="flex items-start justify-between">
           <div className="flex-1">
             <div className="flex items-center space-x-3 mb-2">
-              <Badge variant="secondary" className="text-xs">
-                #{String(index + 1).padStart(2, '0')}
-              </Badge>
               {post.category && (
                 <Badge variant="outline" className="text-xs">
                   {post.category}
@@ -200,64 +178,18 @@ export default function BlogDashboard() {
               <div className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl">
                 <BookOpen className="w-8 h-8 text-white" />
               </div>
-              <div className="ml-4">
-                <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
-                  Blog Dashboard
-                </h1>
-                <p className="text-muted-foreground text-lg">
-                  Manage and explore your content
-                </p>
-              </div>
+            <div className="ml-4">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                Inkly
+              </h1>
+              <p className="text-muted-foreground text-lg">
+                Discover inspiring stories, ideas, and insights.
+              </p>
+            </div>
             </div>
           </div>
-          
-          <Button className="bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700">
-            <Plus className="w-4 h-4 mr-2" />
-            New Post
-          </Button>
+        
         </div>
-
-        {/* Stats Cards */}
-        {posts && (
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <Card className="border-0 bg-gradient-to-r from-blue-500 to-blue-600 text-white">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-blue-100 text-sm font-medium">Total Posts</p>
-                    <p className="text-3xl font-bold">{stats.total}</p>
-                  </div>
-                  <BookOpen className="w-8 h-8 text-blue-200" />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-0 bg-gradient-to-r from-indigo-500 to-indigo-600 text-white">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-indigo-100 text-sm font-medium">Total Views</p>
-                    <p className="text-3xl font-bold">{stats.totalViews.toLocaleString()}</p>
-                  </div>
-                  <Eye className="w-8 h-8 text-indigo-200" />
-                </div>
-              </CardContent>
-            </Card>
-            
-            <Card className="border-0 bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-              <CardContent className="p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-purple-100 text-sm font-medium">Avg Views</p>
-                    <p className="text-3xl font-bold">{stats.avgViews.toLocaleString()}</p>
-                  </div>
-                  <TrendingUp className="w-8 h-8 text-purple-200" />
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
         {/* Controls */}
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 mb-8">
           <div className="flex flex-col sm:flex-row gap-4 flex-1">
@@ -272,16 +204,6 @@ export default function BlogDashboard() {
               />
             </div>
             
-            <Tabs value={selectedCategory} onValueChange={setSelectedCategory} className="w-auto">
-              <TabsList className="grid w-full grid-cols-2 lg:grid-cols-4">
-                <TabsTrigger value="all">All</TabsTrigger>
-                {categories.slice(0, 3).map((category) => (
-                  <TabsTrigger key={category} value={category} className="hidden sm:flex">
-                    {category}
-                  </TabsTrigger>
-                ))}
-              </TabsList>
-            </Tabs>
           </div>
           
           <div className="flex items-center space-x-2">
@@ -328,9 +250,9 @@ export default function BlogDashboard() {
                 </div>
 
                 {viewMode === 'grid' ? (
-                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                  <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
                     {filteredPosts.map((post, index) => (
-                      <Link key={post.id} href={`/posts/${post.id}`}>
+                      <Link key={post.id} href={`/posts/${post.id}`} className="block h-full">
                         <PostCard post={post} index={index} />
                       </Link>
                     ))}
@@ -338,7 +260,7 @@ export default function BlogDashboard() {
                 ) : (
                   <div className="space-y-4">
                     {filteredPosts.map((post, index) => (
-                      <Link key={post.id} href={`/posts/${post.id}`}>
+                      <Link key={post.id} href={`/posts/${post.id}`} className="block">
                         <PostListItem post={post} index={index} />
                       </Link>
                     ))}

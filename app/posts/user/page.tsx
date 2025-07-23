@@ -115,7 +115,7 @@ export default function BlogDashboard() {
   );
 
   const PostCard = ({ post, index }: { post: Post; index: number }) => (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50">
+    <Card className="h-full group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 border-0 bg-gradient-to-br from-white to-gray-50/50">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between mb-2">
           <Badge variant="secondary" className="text-xs">
@@ -334,7 +334,7 @@ export default function BlogDashboard() {
                 {viewMode === 'grid' ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
                     {filteredPosts.map((post, index) => (
-                      <Link key={post.id} href={`/posts/${post.id}`}>
+                      <Link key={post.id} href={`/posts/${post.id}`} className="block h-full">
                         <PostCard post={post} index={index} />
                       </Link>
                     ))}
@@ -342,7 +342,7 @@ export default function BlogDashboard() {
                 ) : (
                   <div className="space-y-4">
                     {filteredPosts.map((post, index) => (
-                      <Link key={post.id} href={`/posts/${post.id}`}>
+                      <Link key={post.id} href={`/posts/${post.id}`} className="block">
                         <PostListItem post={post} index={index} />
                       </Link>
                     ))}
