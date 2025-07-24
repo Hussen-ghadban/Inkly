@@ -27,6 +27,7 @@ interface Post {
   id: string;
   title: string;
   content: string;
+  authorId: string;
   createdAt?: string;
   views?: number;
   category?: string;
@@ -116,6 +117,11 @@ export default function BlogDashboard() {
               {post.category}
             </Badge>
           )}
+          <p className="hover:underline">
+            <Link href={`/posts/user/${post.authorId}`}>
+              {post.author?.name}
+            </Link>
+          </p>
         </div>
       </CardContent>
     </Card>
@@ -171,9 +177,6 @@ export default function BlogDashboard() {
         <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between mb-8">
           <div className="mb-6 lg:mb-0">
             <div className="flex items-center mb-4">
-              <div className="p-3 bg-gradient-to-r from-blue-600 to-indigo-600 rounded-xl">
-                <BookOpen className="w-8 h-8 text-white" />
-              </div>
             <div className="ml-4">
               <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
                 Inkly
@@ -247,17 +250,17 @@ export default function BlogDashboard() {
 
                 {viewMode === 'grid' ? (
                   <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 ">
-                    {filteredPosts.map((post, index) => (
+                    {filteredPosts.map((post) => (
                       <Link key={post.id} href={`/posts/${post.id}`} className="block h-full">
-                        <PostCard post={post} index={index} />
+                        <PostCard post={post}  />
                       </Link>
                     ))}
                   </div>
                 ) : (
                   <div className="space-y-4">
-                    {filteredPosts.map((post, index) => (
+                    {filteredPosts.map((post) => (
                       <Link key={post.id} href={`/posts/${post.id}`} className="block">
-                        <PostListItem post={post} index={index} />
+                        <PostListItem post={post}  />
                       </Link>
                     ))}
                   </div>

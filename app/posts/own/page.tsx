@@ -31,10 +31,10 @@ interface Post {
   id: string;
   title: string;
   content: string;
-  publishedAt?: string;
   views?: number;
   category?: string;
   author?: string;
+  createdAt?: string;
 }
 
 
@@ -45,7 +45,7 @@ export default function BlogDashboard() {
   const token = useSelector((state: RootState) => state.auth.token);
     
     const fetchPosts = async (): Promise<Post[]> => {
-      const res = await fetch(`${baseUrl}/api/posts/user`,{
+      const res = await fetch(`${baseUrl}/api/posts/own`,{
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
