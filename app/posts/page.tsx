@@ -45,7 +45,7 @@ const fetchPosts = async (): Promise<Post[]> => {
 
 export default function BlogDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   const { data: posts, isLoading, error } = useQuery({

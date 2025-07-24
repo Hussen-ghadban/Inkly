@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '@/store';
 import { useParams } from 'next/navigation';
@@ -10,6 +10,15 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+
+// Define proper types for your message structure
+interface Message {
+  id: string | number;
+  content: string;
+  senderId: string;
+  createdAt: string;
+  pending?: boolean;
+}
 
 export default function ChatPage() {
   const user = useSelector((state: RootState) => state.auth.user);
@@ -21,7 +30,7 @@ export default function ChatPage() {
 
   const [content, setContent] = useState('');
   const [sending, setSending] = useState(false);
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [conversationId, setConversationId] = useState<string | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -34,7 +43,7 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const fetchOrCreateConversation = async () => {
+  const fetchOrCreateConversation = useCallback(async () => {
     if (!senderId || !receiverId) return;
 
     try {
@@ -54,10 +63,10 @@ export default function ChatPage() {
       } else {
         console.error(data.error || 'Failed to fetch/create conversation');
       }
-    } catch (err) {
-      console.error('Error fetching/creating conversation');
+    } catch (error) {
+      console.error('Error fetching/creating conversation:', error);
     }
-  };
+  }, [senderId, receiverId, token]);
 
   const sendMessage = async () => {
     if (!content.trim() || !senderId || !receiverId) return;
@@ -66,7 +75,7 @@ export default function ChatPage() {
     setIsTyping(true);
 
     // Optimistically add message to UI
-    const tempMessage = {
+    const tempMessage: Message = {
       id: Date.now(),
       content,
       senderId,
@@ -99,7 +108,8 @@ export default function ChatPage() {
           msg.id === tempMessage.id ? newMessage : msg
         ));
       }
-    } catch {
+    } catch (error) {
+      console.error('Error sending message:', error);
       setMessages((prev) => prev.filter(msg => msg.id !== tempMessage.id));
       alert('Error sending message');
     }
@@ -108,7 +118,7 @@ export default function ChatPage() {
     setIsTyping(false);
   };
 
-  const fetchMessages = async (conversationId: string) => {
+  const fetchMessages = useCallback(async (conversationId: string) => {
     try {
       const res = await fetch(`/api/conversation/${conversationId}`,{
         method: 'GET',
@@ -123,10 +133,10 @@ export default function ChatPage() {
       } else {
         console.error(data.error || 'Failed to fetch messages');
       }
-    } catch (err) {
-      console.error('Error fetching messages');
+    } catch (error) {
+      console.error('Error fetching messages:', error);
     }
-  };
+  }, [token]);
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -145,14 +155,14 @@ export default function ChatPage() {
   // Fetch or create conversation when receiverId changes
   useEffect(() => {
     fetchOrCreateConversation();
-  }, [receiverId]);
+  }, [fetchOrCreateConversation]);
 
   // Fetch messages only when conversationId is set
   useEffect(() => {
     if (conversationId) {
       fetchMessages(conversationId);
     }
-  }, [conversationId]);
+  }, [conversationId, fetchMessages]);
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-slate-100">

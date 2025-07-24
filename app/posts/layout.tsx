@@ -1,6 +1,6 @@
 // app/posts/layout.tsx
 import React from "react";
-import ProtectedRoute from '@/app/components/general/ProtectedRoute';
+// import ProtectedRoute from '@/app/components/general/ProtectedRoute';
 export default function PostsLayout({ children }: { children: React.ReactNode }) {
   return (
     // <ProtectedRoute>

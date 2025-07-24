@@ -17,8 +17,6 @@ import {
   Settings, 
   LogOut,
   PlusCircle,
-  Home,
-  FileText,
   BookOpen,
 } from 'lucide-react';
 import { RootState } from '@/store';
