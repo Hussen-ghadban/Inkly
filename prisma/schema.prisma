@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -14,24 +8,58 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(cuid())
-  name      String?
-  email     String    @unique
-  password  String
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String       @id @default(cuid())
+  name       String?
+  email      String       @unique
+  password   String
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
 
-  posts     Post[]
+  posts      Post[]
+  sentMessages     Message[]       @relation("SentMessages")
+  receivedMessages Message[]       @relation("ReceivedMessages")
+  conversationsInitiated Conversation[] @relation("InitiatedConversations")
+  conversationsReceived Conversation[] @relation("ReceivedConversations")
 }
 
 model Post {
-  id        String    @id @default(cuid())
-  title     String
-  content   String
-  published Boolean   @default(false)
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  id         String    @id @default(cuid())
+  title      String
+  content    String
+  published  Boolean   @default(false)
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
 
-  authorId  String
-  author    User      @relation(fields: [authorId], references: [id])
+  views      Int       @default(0)
+  likes      Int       @default(0)
+  tags       String[]  @default([]) // PostgreSQL text[]
+
+  authorId   String
+  author     User      @relation(fields: [authorId], references: [id])
+}
+
+model Conversation {
+  id           String   @id @default(cuid())
+  participant1Id String
+  participant2Id String
+  createdAt    DateTime @default(now())
+
+  participant1 User     @relation("InitiatedConversations", fields: [participant1Id], references: [id])
+  participant2 User     @relation("ReceivedConversations", fields: [participant2Id], references: [id])
+
+  messages     Message[]
+}
+
+model Message {
+  id             String   @id @default(cuid())
+  content        String
+  createdAt      DateTime @default(now())
+
+  senderId       String
+  receiverId     String
+  conversationId String
+
+  sender         User     @relation("SentMessages", fields: [senderId], references: [id])
+  receiver       User     @relation("ReceivedMessages", fields: [receiverId], references: [id])
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
 }
