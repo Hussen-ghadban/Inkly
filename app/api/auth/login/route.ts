@@ -27,6 +27,7 @@ export async function POST(req: Request) {
   }
 
   const token = signJwtToken({ id: user.id});
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { password: _, ...userWithoutPassword } = user;
 
   return NextResponse.json(
