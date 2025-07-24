@@ -27,7 +27,6 @@ import { useSelector } from 'react-redux';
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
 interface Post {
-    
   id: string;
   title: string;
   content: string;
@@ -43,6 +42,8 @@ export default function BlogDashboard() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const token = useSelector((state: RootState) => state.auth.token);
+  // const user = useSelector((state: RootState) => state.auth.user);
+  // const userId = user?.id;
     
     const fetchPosts = async (): Promise<Post[]> => {
       const res = await fetch(`${baseUrl}/api/posts/own`,{
