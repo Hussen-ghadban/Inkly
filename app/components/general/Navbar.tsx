@@ -19,6 +19,7 @@ import {
   PlusCircle,
   Home,
   FileText,
+  BookOpen,
 } from 'lucide-react';
 import { RootState } from '@/store';
 import { useRouter } from 'next/navigation';
@@ -49,22 +50,10 @@ const router = useRouter();
         {/* Logo */}
         <div className="text-xl font-bold tracking-wide">
           <Link href="/" className="hover:text-blue-400 transition-colors">
+            <BookOpen className="w-8 h-8 text-white" />
             Inkly
           </Link>
         </div>
-        
-        {/* Navigation Links */}
-        <ul className="hidden md:flex items-center space-x-6">
-          <li>
-            <Link 
-              href="/" 
-              className="flex items-center gap-2 hover:text-blue-400 transition-colors"
-            >
-              <Home size={16} />
-              Home
-            </Link>
-          </li>
-        </ul>
         
         {/* Hero Section - Profile or Get Started */}
         <div className="flex items-center gap-4">
@@ -104,7 +93,7 @@ const router = useRouter();
                   <DropdownMenuSeparator className="bg-gray-700" />
                   
                   <DropdownMenuItem className="hover:bg-gray-700 cursor-pointer">
-                    <Link href="/posts/user" className="flex items-center w-full">
+                    <Link href="/posts/own" className="flex items-center w-full">
                       {/* <Dashboard className="mr-2 h-4 w-4" /> */}
                       Dashboard
                     </Link>
