@@ -14,22 +14,12 @@ import {
   Eye,
   Plus,
   TrendingUp,
-  User,
-  MapPin,
-  Globe,
-  Twitter,
-  Github,
-  Linkedin,
   MessageCircle,
   Mail,
   Heart,
   Share2,
-  Clock,
   Award,
   Users,
-  MoreHorizontal,
-  Edit3,
-  Settings
 } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -39,6 +29,7 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Separator } from '@/components/ui/separator';
+import { useRouter } from 'next/navigation';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -51,7 +42,6 @@ interface Post {
   category?: string;
   author?: string;
   createdAt?: string;
-  readTime?: number;
 }
 
 interface UserProfile {
@@ -61,12 +51,7 @@ interface UserProfile {
   email: string;
   avatar?: string;
   bio?: string;
-  location?: string;
-  website?: string;
-  twitter?: string;
-  github?: string;
-  linkedin?: string;
-  joinedAt: string;
+  createdAt: string;
   followers?: number;
   following?: number;
   isFollowing?: boolean;
@@ -78,7 +63,7 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [activeTab, setActiveTab] = useState('posts');
-  
+  const router = useRouter();
   const fetchUserProfile = async (): Promise<UserProfile> => {
     const res = await fetch(`${baseUrl}/api/user/${id}`, {
       method: 'GET',
@@ -164,9 +149,8 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
   };
 
   const handleChatWithUser = () => {
-    // This would typically open a chat modal or navigate to a chat page
-    console.log('Opening chat with user:', userProfile?.username);
-    // You can implement your chat logic here
+    if (!userProfile?.id) return;
+    router.push(`/chat/${userProfile.id}`);
   };
 
   const handleFollowUser = () => {
@@ -207,12 +191,6 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
               <Calendar className="w-3 h-3 mr-1" />
               {formatDate(post.createdAt)}
             </div>
-            {post.readTime && (
-              <div className="flex items-center">
-                <Clock className="w-3 h-3 mr-1" />
-                {post.readTime} min
-              </div>
-            )}
           </div>
           {post.category && (
             <Badge variant="outline" className="text-xs">
@@ -266,12 +244,6 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
                 <Calendar className="w-3 h-3 mr-1" />
                 {formatDate(post.createdAt)}
               </div>
-              {post.readTime && (
-                <div className="flex items-center">
-                  <Clock className="w-3 h-3 mr-1" />
-                  {post.readTime} min read
-                </div>
-              )}
               {post.views !== undefined && (
                 <div className="flex items-center">
                   <Eye className="w-3 h-3 mr-1" />
@@ -337,48 +309,10 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
                     )}
                     
                     <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground mb-4">
-                      {userProfile?.location && (
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-1" />
-                          {userProfile.location}
-                        </div>
-                      )}
                       <div className="flex items-center">
                         <Calendar className="w-4 h-4 mr-1" />
-                        Joined {formatJoinDate(userProfile?.joinedAt || '')}
+                        Joined {formatJoinDate(userProfile?.createdAt || '')}
                       </div>
-                    </div>
-
-                    {/* Social Links */}
-                    <div className="flex items-center gap-3 mb-4">
-                      {userProfile?.website && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={userProfile.website} target="_blank" rel="noopener noreferrer">
-                            <Globe className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
-                      {userProfile?.twitter && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={`https://twitter.com/${userProfile.twitter}`} target="_blank" rel="noopener noreferrer">
-                            <Twitter className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
-                      {userProfile?.github && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={`https://github.com/${userProfile.github}`} target="_blank" rel="noopener noreferrer">
-                            <Github className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
-                      {userProfile?.linkedin && (
-                        <Button variant="ghost" size="sm" asChild>
-                          <a href={userProfile.linkedin} target="_blank" rel="noopener noreferrer">
-                            <Linkedin className="w-4 h-4" />
-                          </a>
-                        </Button>
-                      )}
                     </div>
 
                     {/* Follower Stats */}
@@ -603,20 +537,6 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
                           <span>{userProfile.email}</span>
                         </div>
                       )}
-                      {userProfile?.location && (
-                        <div className="flex items-center">
-                          <MapPin className="w-4 h-4 mr-2 text-muted-foreground" />
-                          <span>{userProfile.location}</span>
-                        </div>
-                      )}
-                      {userProfile?.website && (
-                        <div className="flex items-center">
-                          <Globe className="w-4 h-4 mr-2 text-muted-foreground" />
-                          <a href={userProfile.website} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                            {userProfile.website}
-                          </a>
-                        </div>
-                      )}
                     </div>
                   </div>
                   
@@ -625,7 +545,7 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Member since:</span>
-                        <span>{formatJoinDate(userProfile?.joinedAt || '')}</span>
+                        <span>{formatJoinDate(userProfile?.createdAt || '')}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="text-muted-foreground">Total posts:</span>
@@ -696,13 +616,13 @@ export default function UserProfile({ params }: { params: Promise<{ id: string }
                     </div>
                   </div>
 
-                  {userProfile?.joinedAt && (
+                  {userProfile?.createdAt && (
                     <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                       <div className="p-2 bg-indigo-100 rounded-full">
                         <Award className="w-4 h-4 text-indigo-600" />
                       </div>
                       <div className="flex-1">
-                        <p className="text-sm font-medium">Joined {formatJoinDate(userProfile.joinedAt)}</p>
+                        <p className="text-sm font-medium">Joined {formatJoinDate(userProfile.createdAt)}</p>
                         <p className="text-xs text-muted-foreground">Member of the community</p>
                       </div>
                     </div>
