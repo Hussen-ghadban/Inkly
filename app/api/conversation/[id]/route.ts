@@ -1,12 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db'; // adjust import to your setup
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const { id: conversationId } = context.params;
 
-export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
-    const sender = req.headers.get("x-user-id");
+  const sender = req.headers.get("x-user-id");
   if (!sender) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
-  const conversationId = params.id;
+
   try {
     const conversationWithMessages = await prisma.conversation.findUnique({
       where: { id: conversationId },

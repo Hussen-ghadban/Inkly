@@ -1,14 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 
-export async function GET(req: NextRequest,{ params }: { params: { id: string } }) {
-  const receiver = params.id;
-
+export async function GET(req: NextRequest, context: { params: { id: string } }) {
+  const receiver = context.params.id;
   const sender = req.headers.get("x-user-id");
+
   console.log('Finding conversation between sender:', sender, 'and receiver:', receiver);
-  if (!sender) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
 
   if (!sender || !receiver) {
     return NextResponse.json({ error: 'Both sender and receiver are required' }, { status: 400 });
