@@ -20,6 +20,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useSelector } from 'react-redux';
+import { RootState } from '@/store';
 
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || '';
 
@@ -37,17 +39,25 @@ interface Post {
   };
 }
 
-const fetchPosts = async (): Promise<Post[]> => {
-  const res = await fetch(`${baseUrl}/api/posts`);
-  if (!res.ok) throw new Error('Failed to fetch posts');
-  return res.json();
-};
 
 export default function BlogDashboard() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory] = useState('all');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const token = useSelector((state: RootState) => state.auth.token);
+  
+  const fetchPosts = async (): Promise<Post[]> => {
+    const headers: HeadersInit = {};
 
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+    const res = await fetch(`${baseUrl}/api/posts`,{
+      headers
+    });
+    if (!res.ok) throw new Error('Failed to fetch posts');
+    return res.json();
+  };
   const { data: posts, isLoading, error } = useQuery({
     queryKey: ['posts'],
     queryFn: fetchPosts,
