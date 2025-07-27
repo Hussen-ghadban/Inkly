@@ -10,6 +10,8 @@ import { Input } from '@/components/ui/input';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+// import { connectSocket, getSocket } from '@/lib/socket';
+import { io } from 'socket.io-client';
 
 // Define proper types for your message structure
 interface Message {
@@ -38,6 +40,27 @@ export default function ChatPage() {
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
+
+useEffect(() => {
+  const socket = io("http://localhost:3000"); // or wherever your server is
+
+  socket.on("connect", () => {
+    console.log("✅ Socket connected!", socket.id);
+  });
+
+  socket.on("connect_error", (err) => {
+    console.error("❌ Connection error:", err);
+  });
+
+  socket.on("disconnect", (reason) => {
+    console.warn("⚠️ Socket disconnected:", reason);
+  });
+
+  return () => {
+    socket.disconnect();
+  };
+}, []);
+
 
   useEffect(() => {
     scrollToBottom();
@@ -107,6 +130,9 @@ export default function ChatPage() {
         setMessages((prev) => prev.map(msg => 
           msg.id === tempMessage.id ? newMessage : msg
         ));
+        //   const socket = getSocket();
+        //   console.log("socket",socket)
+        // socket?.emit('send-message', newMessage);
       }
     } catch (error) {
       console.error('Error sending message:', error);

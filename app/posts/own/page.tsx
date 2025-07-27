@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { 
   BookOpen, 
@@ -42,6 +42,7 @@ export default function BlogDashboard() {
     const [selectedCategory, setSelectedCategory] = useState('all');
     const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const token = useSelector((state: RootState) => state.auth.token);
+  const queryClient = useQueryClient();
   // const user = useSelector((state: RootState) => state.auth.user);
   // const userId = user?.id;
     
@@ -62,6 +63,35 @@ export default function BlogDashboard() {
     queryKey: ['posts'],
     queryFn: fetchPosts,
   });
+
+const deletePost = async (id: string): Promise<void> => {
+  const res = await fetch(`${baseUrl}/api/posts/delete/${id}`, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
+  if (!res.ok) throw new Error('Failed to delete post');
+};
+
+const { mutate: handleDelete, isPending: isDeleting } = useMutation({
+  mutationFn: deletePost,
+  onSuccess: () => {
+    queryClient.invalidateQueries({ queryKey: ['posts'] });
+  },
+  onError: (error) => {
+    console.error('Error deleting post:', error);
+  },
+});
+const onDeleteClick = (id: string) => {
+  const confirmed = confirm('Are you sure you want to delete this post?');
+  if (confirmed) {
+    handleDelete(id);
+  }
+};
+
 
   // Filter and search posts
   const filteredPosts = useMemo(() => {
@@ -123,6 +153,16 @@ export default function BlogDashboard() {
           </Badge>
           <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary group-hover:translate-x-1 transition-all duration-200" />
         </div>
+        <Button
+  variant="destructive"
+  size="sm"
+  disabled={isDeleting}
+  onClick={() => onDeleteClick(post.id)}
+  className="mt-2"
+>
+  {isDeleting ? 'Deleting...' : 'Delete'}
+</Button>
+
         <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2 leading-tight">
           {post.title}
         </CardTitle>
@@ -169,6 +209,15 @@ export default function BlogDashboard() {
                 </Badge>
               )}
             </div>
+                    <Button
+  variant="destructive"
+  size="sm"
+  disabled={isDeleting}
+  onClick={() => onDeleteClick(post.id)}
+  className="mt-2"
+>
+  {isDeleting ? 'Deleting...' : 'Delete'}
+</Button>
             <h3 className="text-xl font-semibold group-hover:text-primary transition-colors mb-2">
               {post.title}
             </h3>
