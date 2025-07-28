@@ -42,7 +42,21 @@ export default function PostDetailPage() {
     };
     if (id) fetchPost();
   }, [id]);
+  
+  useEffect(() => {
+    const fetchPostAndIncrementViews = async () => {
+      try {
+        const res = await fetch(`${baseUrl}/api/posts/view/${id}`)
+        if (!res.ok) throw new Error('Failed to fetch post')
 
+        // const data = await res.json()
+      } catch (err) {
+        console.error(err)
+      }
+    }
+
+    fetchPostAndIncrementViews()
+  }, [id])
   // Loading state
   if (isLoading) {
     return (

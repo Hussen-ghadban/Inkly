@@ -75,7 +75,6 @@ const deletePost = async (id: string): Promise<void> => {
 
   if (!res.ok) throw new Error('Failed to delete post');
 };
-
 const { mutate: handleDelete, isPending: isDeleting } = useMutation({
   mutationFn: deletePost,
   onSuccess: () => {
@@ -85,12 +84,14 @@ const { mutate: handleDelete, isPending: isDeleting } = useMutation({
     console.error('Error deleting post:', error);
   },
 });
+
 const onDeleteClick = (id: string) => {
   const confirmed = confirm('Are you sure you want to delete this post?');
   if (confirmed) {
     handleDelete(id);
   }
 };
+
 
 
   // Filter and search posts
@@ -162,6 +163,15 @@ const onDeleteClick = (id: string) => {
 >
   {isDeleting ? 'Deleting...' : 'Delete'}
 </Button>
+  <Link href={`/posts/${post.id}/edit`}>
+        <Button
+  variant="destructive"
+  size="sm"
+  className="mt-2"
+>
+  Update
+</Button>
+</Link>
 
         <CardTitle className="text-lg group-hover:text-primary transition-colors line-clamp-2 leading-tight">
           {post.title}
